@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import EmptyState from "@/components/EmptyState";
 import ListingCard from "@/components/ListingCard";
+import ListingGrid from "@/components/ListingGrid";
 import MapPlaceholder from "@/components/MapPlaceholder";
 import Navbar from "@/components/Navbar";
 import SortSelect from "@/components/SortSelect";
 import { LISTINGS } from "@/data/listings";
-import { normalize } from "@/lib/format";
+import { normalize, plural } from "@/lib/format";
 import type { SortOrder } from "@/types/listing";
 
-export default function CatalogPage() {
+const CatalogPage = () => {
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [query, setQuery] = useState("");
 
@@ -30,21 +32,22 @@ export default function CatalogPage() {
         <section aria-labelledby="results-title">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <h1 id="results-title" className="text-lg font-semibold" aria-live="polite">
-              {results.length} {results.length === 1 ? "alojamiento" : "alojamientos"}
+              {plural(results.length, "alojamiento", "alojamientos")}
             </h1>
             <SortSelect value={sortOrder} onChange={setSortOrder} />
           </div>
 
           {results.length > 0 ? (
-            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 2xl:grid-cols-3">
-              {results.map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
-              ))}
-            </div>
+            <ListingGrid className="2xl:grid-cols-3">
+              {results.map((listing) => <ListingCard key={listing.id} listing={listing} />)}
+            </ListingGrid>
           ) : (
-            <p className="py-20 text-center text-neutral-500">
-              No hay alojamientos que coincidan con «{query}».
-            </p>
+            <EmptyState
+              title="No hay coincidencias"
+              description={`Ningún alojamiento coincide con «${query}».`}
+              actionLabel="Borrar búsqueda"
+              onAction={() => setQuery("")}
+            />
           )}
         </section>
 
@@ -54,4 +57,6 @@ export default function CatalogPage() {
       </main>
     </>
   );
-}
+};
+
+export default CatalogPage;

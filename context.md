@@ -21,7 +21,7 @@ Muestra toda la información de un alojamiento. Empieza con una galería de foto
 
 ## Capturas de referencia (375px)
 
-Las capturas se tomaron con Playwright en el viewport de un iPhone (375×812, densidad 3×) el 2026-10-30, desde es.airbnb.com:
+Las capturas se tomaron con Playwright en el viewport de un iPhone (375×812, densidad 3×) el 2026-10-30, desde es.airbnb.com. Las de primera pantalla se guardan a 3× y las de página completa reducidas a 1× (375px de ancho) para que pesen menos:
 
 | Vista | Primera pantalla | Página completa |
 |---|---|---|
@@ -239,10 +239,14 @@ Las especificaciones de arriba describen Airbnb tal cual. El clon implementa lo 
 |---|---|---|
 | `/` | `app/page.tsx` | `useState`: `listings`, `loading`, `query`, `activeCategory`. `useEffect` + `setTimeout(1000)` carga `LISTINGS` |
 | `/catalog` | `app/catalog/page.tsx` | `useState`: `sortOrder` (`"asc"`/`"desc"`), `query` |
-| `/rooms/[id]` | `app/rooms/[id]/page.tsx` → `components/RoomDetail.tsx` | `useParams` para leer el id; `useEffect` + `setTimeout(800)` carga la habitación. `PhotoGallery` (índice), `BookingCard` (huéspedes) |
+| `/rooms/[id]` | `app/rooms/[id]/page.tsx` → `RoomDetail` → `RoomLoader` | `useParams` para leer el id; `useEffect` (en `RoomLoader`) + `setTimeout(800)` carga la habitación. `PhotoGallery` (índice), `BookingCard` (huéspedes) |
 
-- **Datos simulados:** `data/listings.ts` (14 alojamientos, categorías y servicios). **Tipos:** `types/listing.ts`. **Utilidades:** `lib/format.ts`.
-- **Componentes reutilizables (`/components`):** `Navbar`, `CategoryBar`, `ListingCard` (se usa en Inicio y Catálogo), `PhotoPlaceholder`, `StarRating`, `FavoriteButton`, `LoadingIndicator`, `SortSelect`, `MapPlaceholder`, `PhotoGallery`, `HostRow`, `AmenitiesGrid`, `GuestCounter`, `BookingCard`, `icons`.
+- **Datos simulados:** `data/listings.ts` (14 alojamientos, categorías y servicios). **Tipos:** `types/listing.ts` (`Listing` para las tarjetas, `Room extends Listing` para el detalle, más `Photo`, `Host`, `Amenity`, `Category`, `SortOrder`). **Utilidades:** `lib/format.ts`.
+- **Componentes (`/components`):** un componente por archivo, todos declarados como `const` con función flecha, sin clases, y ninguno pasa de ~70 líneas de lógica + JSX.
+  - Navegación: `Navbar` (compone `BrandLogo`, `SearchField`/`SearchLink` y `UserMenu`), `CategoryBar`, `Breadcrumbs`
+  - Listados: `ListingGrid`, `ListingCard` (se usa en Inicio y Catálogo), `ListingCardSkeleton`, `FavoriteButton`, `ListingPhoto` (fotos de Unsplash con `next/image`), `StarRating`, `SortSelect`, `MapPlaceholder`, `EmptyState`, `LoadingIndicator`
+  - Detalle: `RoomDetail`, `RoomLoader`, `RoomContent`, `RoomHeader`, `RoomSkeleton`, `RoomNotFound`, `PhotoGallery`, `HostRow`, `AmenitiesGrid`, `BookingCard`, `GuestCounter`
+  - Iconos: `components/icons/`, un SVG por archivo sobre una base común `IconBase`, reexportados desde `icons/index.ts`
 - **Navegación:** solo con `<Link>` de `next/link`. Las tarjetas llevan a `/rooms/[id]` y el detalle tiene un botón de volver y un breadcrumb (Inicio › Catálogo › título).
 - **Next.js 16 con `cacheComponents`:** `/rooms/[id]` exporta `generateStaticParams` y envuelve `RoomDetail` en `<Suspense>`, porque `useParams` puede suspender con ids desconocidos.
 - **Marca:** se usa el nombre "clonbnb" con un icono de casa propio en lugar del logotipo de Airbnb.

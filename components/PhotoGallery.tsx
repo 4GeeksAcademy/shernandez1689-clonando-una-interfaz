@@ -3,18 +3,20 @@
 import { useState } from "react";
 import type { Photo } from "@/types/listing";
 import { ChevronLeftIcon, ChevronRightIcon } from "./icons";
-import PhotoPlaceholder from "./PhotoPlaceholder";
+import ListingPhoto from "./ListingPhoto";
 
-export default function PhotoGallery({ photos }: { photos: Photo[] }) {
+const PhotoGallery = ({ photos, title }: { photos: Photo[]; title: string }) => {
   const [index, setIndex] = useState(0);
 
   const goTo = (next: number) => setIndex((next + photos.length) % photos.length);
 
   return (
     <section aria-label="Galería de fotos" className="relative overflow-hidden sm:rounded-2xl">
-      <PhotoPlaceholder
+      <ListingPhoto
         photo={photos[index]}
-        showLabel
+        alt={`${title}: ${photos[index].label}`}
+        sizes="(min-width: 1152px) 1072px, 100vw"
+        eager
         className="aspect-[4/3] w-full sm:aspect-[16/9]"
       />
 
@@ -53,4 +55,6 @@ export default function PhotoGallery({ photos }: { photos: Photo[] }) {
       </div>
     </section>
   );
-}
+};
+
+export default PhotoGallery;

@@ -14,10 +14,9 @@ export interface Category {
   icon: string;
 }
 
-/** Placeholder de foto: una etiqueta y un tono (0–360) para el degradado. */
 export interface Photo {
   label: string;
-  hue: number;
+  url: string;
 }
 
 export interface Amenity {
@@ -31,6 +30,7 @@ export interface Host {
   isSuperhost: boolean;
 }
 
+/** Alojamiento tal como aparece en las tarjetas de Inicio y Catálogo. */
 export interface Listing {
   id: string;
   title: string;
@@ -39,12 +39,16 @@ export interface Listing {
   pricePerNight: number;
   rating: number;
   reviewCount: number;
+  photos: Photo[];
+}
+
+/** Habitación completa que muestra la página de detalle `/rooms/[id]`. */
+export interface Room extends Listing {
   maxGuests: number;
   bedrooms: number;
   beds: number;
   baths: number;
   description: string;
-  photos: Photo[];
   amenities: Amenity[];
   host: Host;
 }

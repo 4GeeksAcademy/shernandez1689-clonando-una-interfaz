@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { HeartIcon } from "./icons";
 
-export default function FavoriteButton({ className = "" }: { className?: string }) {
+const FavoriteButton = ({ className = "" }: { className?: string }) => {
   const [saved, setSaved] = useState(false);
 
   return (
@@ -19,4 +19,6 @@ export default function FavoriteButton({ className = "" }: { className?: string 
       />
     </button>
   );
-}
+};
+
+export default FavoriteButton;
