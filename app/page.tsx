@@ -3,14 +3,19 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import CategoryBar from "@/components/CategoryBar";
+import EmptyState from "@/components/EmptyState";
 import ListingCard from "@/components/ListingCard";
-import LoadingIndicator, { ListingCardSkeleton } from "@/components/LoadingIndicator";
+import ListingCardSkeleton from "@/components/ListingCardSkeleton";
+import ListingGrid from "@/components/ListingGrid";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import Navbar from "@/components/Navbar";
 import { CATEGORIES, LISTINGS } from "@/data/listings";
 import { normalize } from "@/lib/format";
 import type { CategoryId, Listing } from "@/types/listing";
 
-export default function HomePage() {
+const GRID_COLUMNS = "lg:grid-cols-3 xl:grid-cols-4";
+
+const HomePage = () => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
@@ -33,25 +38,24 @@ export default function HomePage() {
       normalize(`${listing.title} ${listing.location}`).includes(term),
   );
 
+  const clearFilters = () => {
+    setQuery("");
+    setActiveCategory("todos");
+  };
+
   return (
     <>
       <Navbar search={{ value: query, onChange: setQuery }}>
-        <CategoryBar
-          categories={CATEGORIES}
-          activeId={activeCategory}
-          onChange={setActiveCategory}
-        />
+        <CategoryBar categories={CATEGORIES} activeId={activeCategory} onChange={setActiveCategory} />
       </Navbar>
 
       <main className="mx-auto w-full max-w-screen-2xl flex-1 px-4 pb-16 pt-6 sm:px-6 lg:px-10">
         {loading ? (
           <>
             <LoadingIndicator label="Cargando alojamientos…" />
-            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 8 }, (_, i) => (
-                <ListingCardSkeleton key={i} />
-              ))}
-            </div>
+            <ListingGrid className={GRID_COLUMNS}>
+              {Array.from({ length: 8 }, (_, i) => <ListingCardSkeleton key={i} />)}
+            </ListingGrid>
           </>
         ) : (
           <>
@@ -63,34 +67,23 @@ export default function HomePage() {
                 Ver catálogo completo
               </Link>
             </div>
-
             {visibleListings.length > 0 ? (
-              <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {visibleListings.map((listing) => (
-                  <ListingCard key={listing.id} listing={listing} />
-                ))}
-              </div>
+              <ListingGrid className={GRID_COLUMNS}>
+                {visibleListings.map((listing) => <ListingCard key={listing.id} listing={listing} />)}
+              </ListingGrid>
             ) : (
-              <div className="py-20 text-center">
-                <p className="text-lg font-semibold">No hay coincidencias</p>
-                <p className="mt-1 text-neutral-500">
-                  Prueba con otra búsqueda o cambia de categoría.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setQuery("");
-                    setActiveCategory("todos");
-                  }}
-                  className="mt-6 rounded-lg border border-neutral-900 px-5 py-3 text-sm font-semibold hover:bg-neutral-100"
-                >
-                  Quitar filtros
-                </button>
-              </div>
+              <EmptyState
+                title="No hay coincidencias"
+                description="Prueba con otra búsqueda o cambia de categoría."
+                actionLabel="Quitar filtros"
+                onAction={clearFilters}
+              />
             )}
           </>
         )}
       </main>
     </>
   );
-}
+};
+
+export default HomePage;

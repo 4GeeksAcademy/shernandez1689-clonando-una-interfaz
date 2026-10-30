@@ -7,7 +7,7 @@ interface GuestCounterProps {
   onChange: (value: number) => void;
 }
 
-export default function GuestCounter({ value, min, max, onChange }: GuestCounterProps) {
+const GuestCounter = ({ value, min, max, onChange }: GuestCounterProps) => {
   const buttonClass =
     "grid size-8 place-items-center rounded-full border border-neutral-400 text-neutral-600 transition hover:border-neutral-900 hover:text-neutral-900 disabled:cursor-not-allowed disabled:border-neutral-200 disabled:text-neutral-300";
 
@@ -42,4 +42,6 @@ export default function GuestCounter({ value, min, max, onChange }: GuestCounter
       </div>
     </div>
   );
-}
+};
+
+export default GuestCounter;

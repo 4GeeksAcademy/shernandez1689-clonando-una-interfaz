@@ -1,4 +1,4 @@
-import type { Amenity, Category, Listing, Photo } from "@/types/listing";
+import type { Amenity, Category, Photo, Room } from "@/types/listing";
 
 export const CATEGORIES: Category[] = [
   { id: "todos", label: "Todos", icon: "🏘️" },
@@ -28,13 +28,57 @@ const A = {
   parrilla: { icon: "🍖", label: "Parrilla" },
 } satisfies Record<string, Amenity>;
 
-function photos(hue: number): Photo[] {
-  return ["Fachada", "Sala", "Recámara", "Cocina", "Baño", "Vista"].map(
-    (label, i) => ({ label, hue: (hue + i * 28) % 360 }),
-  );
+const PHOTO_LABELS = ["Fachada", "Sala", "Recámara", "Cocina", "Baño", "Vista"];
+
+/** Recibe ids de fotos de Unsplash en el orden de PHOTO_LABELS. */
+function photos(...ids: string[]): Photo[] {
+  return ids.map((id, i) => ({
+    label: PHOTO_LABELS[i],
+    url: `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1600&q=80`,
+  }));
 }
 
-export const LISTINGS: Listing[] = [
+const IMG = {
+  // Exteriores
+  bungalowPlaya: "1499793983690-e29da59ef1c2",
+  villaModerna: "1613490493576-7fde63acd811",
+  casaColonial: "1570129477492-45c003edd2be",
+  cabanaBosque: "1449158743715-0a90ebb6d2d8",
+  casaTropical: "1564013799919-ab600027ffc6",
+  hacienda: "1416331108676-a22ccb276e35",
+  casaAcantilado: "1600596542815-ffad4c1539a9",
+  cabanaNieve: "1510798831971-661eb04b3739",
+  mansionPiscina: "1580587771525-78b9dba3b914",
+  casaCampo: "1568605114967-8130f3a36994",
+  piscinaAzotea: "1582268611958-ebfd161ef9cf",
+  cabanaAtardecer: "1542718610-a1d656d1884c",
+  // Interiores
+  salaBlanca: "1505691938895-1758d7feb511",
+  salaPlantas: "1502672260266-1c1ef2d93688",
+  salaDepto: "1522708323590-d24dbb6b0267",
+  salaAmplia: "1560448204-e02f11c3d0e2",
+  salaAzul: "1493809842364-78817add7ffb",
+  salaModerna: "1600607687939-ce8a6c25118c",
+  salaSillon: "1586023492125-27b2c045efd7",
+  recamaraClasica: "1505693416388-ac5ce068fe85",
+  recamaraNaranja: "1540518614846-7eded433c457",
+  recamaraClara: "1595526114035-0d45ed16cfbf",
+  recamaraHotel: "1618773928121-c32242e63f39",
+  cocinaBlanca: "1484154218962-a197022b5858",
+  cocinaClasica: "1556912173-3bb406ef7e77",
+  cocinaIsla: "1507089947368-19c1da9775ae",
+  banoPlantas: "1552321554-5fefe8c9ef14",
+  banoModerno: "1584622650111-993a426fbf0a",
+  // Vistas
+  vistaLago: "1501785888041-af3ef285b470",
+  vistaNubes: "1506905925346-21bda4d32df4",
+  vistaPlaya: "1507525428034-b723cf961d3e",
+  vistaCampo: "1500382017468-9049fed747ef",
+  vistaValle: "1464822759023-fed622ff2c3b",
+  vistaResort: "1520250497591-112f2f40a3f4",
+};
+
+export const LISTINGS: Room[] = [
   {
     id: "1",
     title: "Casa frente al mar",
@@ -49,7 +93,7 @@ export const LISTINGS: Listing[] = [
     baths: 2,
     description:
       "Despierta con el sonido de las olas en esta casa de madera a pie de playa. Tiene una terraza con hamacas, cocina abierta y acceso directo a una caleta tranquila, perfecta para nadar al amanecer.",
-    photos: photos(190),
+    photos: photos(IMG.bungalowPlaya, IMG.salaAmplia, IMG.recamaraClasica, IMG.cocinaBlanca, IMG.banoPlantas, IMG.vistaPlaya),
     amenities: [A.playa, A.wifi, A.cocina, A.aire, A.parrilla, A.estacionamiento],
     host: { name: "Mariana", yearsHosting: 6, isSuperhost: true },
   },
@@ -67,7 +111,7 @@ export const LISTINGS: Listing[] = [
     baths: 4,
     description:
       "Una villa en lo alto de la colina con piscina infinita que se funde con la bahía de Banderas. Ideal para grupos que quieren privacidad sin alejarse del malecón.",
-    photos: photos(170),
+    photos: photos(IMG.villaModerna, IMG.salaModerna, IMG.recamaraHotel, IMG.cocinaIsla, IMG.banoModerno, IMG.vistaResort),
     amenities: [A.piscina, A.wifi, A.cocina, A.aire, A.tv, A.jacuzzi, A.estacionamiento],
     host: { name: "Diego", yearsHosting: 9, isSuperhost: true },
   },
@@ -85,7 +129,7 @@ export const LISTINGS: Listing[] = [
     baths: 6,
     description:
       "Casona del siglo XVIII restaurada con patios de cantera, fuentes y un jardín lleno de buganvilias, a tres calles de la Parroquia.",
-    photos: photos(30),
+    photos: photos(IMG.casaColonial, IMG.salaBlanca, IMG.recamaraClasica, IMG.cocinaClasica, IMG.banoPlantas, IMG.vistaCampo),
     amenities: [A.jardin, A.wifi, A.cocina, A.chimenea, A.tv, A.lavadora, A.estacionamiento],
     host: { name: "Isabel", yearsHosting: 11, isSuperhost: true },
   },
@@ -103,7 +147,7 @@ export const LISTINGS: Listing[] = [
     baths: 1,
     description:
       "Loft luminoso con balcón frente al Parque España. Cafés, librerías y restaurantes a la vuelta de la esquina.",
-    photos: photos(340),
+    photos: photos(IMG.salaDepto, IMG.salaSillon, IMG.recamaraClara, IMG.cocinaBlanca, IMG.banoModerno, IMG.salaAzul),
     amenities: [A.wifi, A.cocina, A.trabajo, A.tv, A.lavadora],
     host: { name: "Yanei", yearsHosting: 3, isSuperhost: true },
   },
@@ -121,7 +165,7 @@ export const LISTINGS: Listing[] = [
     baths: 1,
     description:
       "Cabaña de troncos rodeada de pinos, con chimenea, terraza y vista parcial al lago. Perfecta para desconectar un fin de semana.",
-    photos: photos(110),
+    photos: photos(IMG.cabanaBosque, IMG.salaPlantas, IMG.recamaraNaranja, IMG.cocinaClasica, IMG.banoPlantas, IMG.vistaLago),
     amenities: [A.chimenea, A.wifi, A.cocina, A.parrilla, A.mascotas, A.estacionamiento],
     host: { name: "Rodrigo", yearsHosting: 5, isSuperhost: false },
   },
@@ -139,7 +183,7 @@ export const LISTINGS: Listing[] = [
     baths: 1,
     description:
       "Estudio acogedor con terraza privada y plantas, en una de las colonias con más vida de la ciudad.",
-    photos: photos(300),
+    photos: photos(IMG.salaAzul, IMG.salaPlantas, IMG.recamaraClara, IMG.cocinaIsla, IMG.banoPlantas, IMG.salaDepto),
     amenities: [A.wifi, A.cocina, A.trabajo, A.aire],
     host: { name: "Andrea", yearsHosting: 2, isSuperhost: false },
   },
@@ -157,7 +201,7 @@ export const LISTINGS: Listing[] = [
     baths: 2,
     description:
       "Casa con palapa y jardín tropical a 100 metros de la playa principal. Tablas de surf incluidas.",
-    photos: photos(160),
+    photos: photos(IMG.casaTropical, IMG.salaAmplia, IMG.recamaraNaranja, IMG.cocinaBlanca, IMG.banoPlantas, IMG.vistaPlaya),
     amenities: [A.playa, A.wifi, A.cocina, A.jardin, A.mascotas],
     host: { name: "Tomás", yearsHosting: 7, isSuperhost: true },
   },
@@ -175,7 +219,7 @@ export const LISTINGS: Listing[] = [
     baths: 3,
     description:
       "Hacienda de adobe en medio de los viñedos, con catas privadas y cenas al aire libre bajo las estrellas.",
-    photos: photos(60),
+    photos: photos(IMG.hacienda, IMG.salaBlanca, IMG.recamaraClasica, IMG.cocinaClasica, IMG.banoModerno, IMG.vistaCampo),
     amenities: [A.jardin, A.wifi, A.cocina, A.piscina, A.parrilla, A.estacionamiento],
     host: { name: "Lucía", yearsHosting: 4, isSuperhost: true },
   },
@@ -193,7 +237,7 @@ export const LISTINGS: Listing[] = [
     baths: 3,
     description:
       "Arquitectura contemporánea suspendida sobre el Pacífico. Ventanales de piso a techo y jacuzzi con vista a las ballenas en temporada.",
-    photos: photos(210),
+    photos: photos(IMG.casaAcantilado, IMG.salaModerna, IMG.recamaraHotel, IMG.cocinaIsla, IMG.banoModerno, IMG.vistaPlaya),
     amenities: [A.jacuzzi, A.wifi, A.cocina, A.aire, A.piscina, A.tv],
     host: { name: "Fernando", yearsHosting: 8, isSuperhost: true },
   },
@@ -211,7 +255,7 @@ export const LISTINGS: Listing[] = [
     baths: 1,
     description:
       "Cabaña estilo alpino con techos de dos aguas, chimenea de piedra y senderos que salen desde la puerta.",
-    photos: photos(90),
+    photos: photos(IMG.cabanaNieve, IMG.salaPlantas, IMG.recamaraNaranja, IMG.cocinaClasica, IMG.banoPlantas, IMG.vistaValle),
     amenities: [A.chimenea, A.cocina, A.parrilla, A.mascotas, A.estacionamiento],
     host: { name: "Carmen", yearsHosting: 10, isSuperhost: false },
   },
@@ -229,7 +273,7 @@ export const LISTINGS: Listing[] = [
     baths: 7,
     description:
       "Residencia con muelle privado, sala de cine y jardines que bajan hasta el lago. Personal de limpieza diario incluido.",
-    photos: photos(240),
+    photos: photos(IMG.mansionPiscina, IMG.salaModerna, IMG.recamaraClasica, IMG.cocinaIsla, IMG.banoModerno, IMG.vistaLago),
     amenities: [A.piscina, A.jardin, A.wifi, A.cocina, A.chimenea, A.tv, A.jacuzzi],
     host: { name: "Alejandro", yearsHosting: 12, isSuperhost: true },
   },
@@ -247,7 +291,7 @@ export const LISTINGS: Listing[] = [
     baths: 1,
     description:
       "Casita en una granja familiar con huerto, gallinas y vista al Tepozteco. El desayuno con productos de la granja está incluido.",
-    photos: photos(80),
+    photos: photos(IMG.casaCampo, IMG.salaBlanca, IMG.recamaraClara, IMG.cocinaBlanca, IMG.banoPlantas, IMG.vistaCampo),
     amenities: [A.jardin, A.wifi, A.cocina, A.mascotas, A.estacionamiento],
     host: { name: "Rosa", yearsHosting: 6, isSuperhost: false },
   },
@@ -265,7 +309,7 @@ export const LISTINGS: Listing[] = [
     baths: 1,
     description:
       "Departamento renovado en el centro histórico con alberca compartida en la azotea, perfecta para los atardeceres.",
-    photos: photos(20),
+    photos: photos(IMG.piscinaAzotea, IMG.salaSillon, IMG.recamaraClara, IMG.cocinaIsla, IMG.banoModerno, IMG.vistaResort),
     amenities: [A.piscina, A.wifi, A.cocina, A.aire, A.tv],
     host: { name: "Javier", yearsHosting: 3, isSuperhost: false },
   },
@@ -283,12 +327,12 @@ export const LISTINGS: Listing[] = [
     baths: 1,
     description:
       "Cabaña de piedra al borde de la Barranca del Cobre, con terraza para ver el amanecer sobre el cañón.",
-    photos: photos(0),
+    photos: photos(IMG.cabanaAtardecer, IMG.salaAmplia, IMG.recamaraNaranja, IMG.cocinaClasica, IMG.banoPlantas, IMG.vistaNubes),
     amenities: [A.chimenea, A.cocina, A.parrilla, A.estacionamiento],
     host: { name: "Ernesto", yearsHosting: 5, isSuperhost: true },
   },
 ];
 
-export function getListingById(id: string): Listing | undefined {
+export function getRoomById(id: string): Room | undefined {
   return LISTINGS.find((listing) => listing.id === id);
 }
